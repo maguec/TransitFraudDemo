@@ -1,0 +1,3 @@
+setuptools
+dataclass_csv
+google-cloud-spanner
