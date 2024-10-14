@@ -10,3 +10,5 @@ if __name__ == "__main__":
     client = instance.database("transitdb")
     stations = Stations()
     client.run_in_transaction(writeSpanner, stations)
+    routes = Routes()
+    client.run_in_transaction(writeSpanner, routes)
