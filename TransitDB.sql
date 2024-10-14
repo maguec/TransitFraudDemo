@@ -1,6 +1,6 @@
 -- Node Tables
 
-CREATE TABLE Stations (
+CREATE TABLE Station (
   id INT64 NOT NULL,
   name STRING(MAX),
   latitude FLOAT64,
@@ -9,27 +9,27 @@ CREATE TABLE Stations (
 
 -- Edge Tables
 
-CREATE TABLE Routes (
+CREATE TABLE Route (
   id INT64 NOT NULL,
   to_station INT64,
   distance FLOAT64,
   time FLOAT64,
   line STRING(MAX),
-  FOREIGN KEY(to_station) REFERENCES Stations(id)
+  FOREIGN KEY(to_station) REFERENCES Station(id)
 ) PRIMARY KEY (id, to_station),
-INTERLEAVE IN PARENT Stations ON DELETE CASCADE;
+INTERLEAVE IN PARENT Station ON DELETE CASCADE;
 
 -- Create the Graph
 
 CREATE OR REPLACE PROPERTY GRAPH TransitGraph
   NODE TABLES (
-    Stations,
+    Station,
   )
 
   EDGE TABLES (
-    Routes
-      SOURCE KEY (id) REFERENCES Stations (id)
-      DESTINATION KEY (to_station) REFERENCES Stations (id)
+    Route
+      SOURCE KEY (id) REFERENCES Station (id)
+      DESTINATION KEY (to_station) REFERENCES Station (id)
       LABEL ROUTE
   );
 

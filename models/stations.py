@@ -5,16 +5,22 @@ import csv
 
 @dataclass
 class Station:
-    station_id: str
+    id: int
     name: str
     latitude: float
     longitude: float
 
+    def __init__(self, station):
+        self.id = int(station['id'])
+        self.name = station['station']
+        self.latitude = float(station['latitude'])
+        self.longitude = float(station['longitude'])
+
 @dataclass
 class Stations:
-    stations: list[Station]
+    list_items: list[Station]
 
     def __init__(self):
         with open("data/station.csv") as f:
-            reader = csv.reader(f)
-            self.stations = [Station(*row) for row in reader]
+            reader = csv.DictReader(f)
+            self.list_items = [Station(row) for row in reader]

@@ -15,3 +15,6 @@ instancecreate: ## Spin up a single node Spanner instance
 instancedelete: ## Shutdown the Spanner instance
 	@gcloud spanner instances delete transit
 
+dbclean: ## Remove all  table dat
+	@gcloud spanner databases execute-sql transitdb  --instance=transit --sql='DELETE from Station WHERE id < 100000000;'
+	@gcloud spanner databases execute-sql transitdb  --instance=transit --sql='DELETE from Route WHERE id < 100000000;'

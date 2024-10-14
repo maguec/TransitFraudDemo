@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from models.stations import *
+from models.utils import *
 from google.cloud import spanner
 
 if __name__ == "__main__":
@@ -8,4 +9,4 @@ if __name__ == "__main__":
     instance = s.instance("transit")
     client = instance.database("transitdb")
     stations = Stations()
-    print(stations)
+    client.run_in_transaction(writeSpanner, stations)
