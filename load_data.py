@@ -13,4 +13,7 @@ if __name__ == "__main__":
     routes = Routes()
     client.run_in_transaction(writeSpanner, routes)
     shortest_routes = ShortestRoutes()
-    client.run_in_transaction(writeSpanner, shortest_routes)
+    for i in shortest_routes.split(1000):
+        x = ShortestRoutes(fromCsv=False)
+        x.list_items = i
+        client.run_in_transaction(writeSpanner, x)

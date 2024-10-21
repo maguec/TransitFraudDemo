@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 import csv
+import typing
 
 @dataclass
 class Station:
@@ -66,7 +67,14 @@ class ShortestRoute:
 class ShortestRoutes:
     list_items: list[ShortestRoute]
 
-    def __init__(self):
-        with open("data/shortest_path.csv") as f:
-            reader = csv.DictReader(f)
-            self.list_items = [ShortestRoute(row) for row in reader]
+    def __init__(self, fromCsv=True):
+        if fromCsv:
+            with open("data/shortest_path.csv") as f:
+                reader = csv.DictReader(f)
+                self.list_items = [ShortestRoute(row) for row in reader]
+
+    def split(self, n):
+        res = []
+        for i in range(0, len(self.list_items), n):
+            res.append(self.list_items[i:i + n])
+        return res

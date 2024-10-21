@@ -18,6 +18,7 @@ instancedelete: ## Shutdown the Spanner instance
 dbclean: ## Remove all  table dat
 	@gcloud spanner databases execute-sql transitdb  --instance=transit --sql='DELETE from Station WHERE id < 100000000;'
 	@gcloud spanner databases execute-sql transitdb  --instance=transit --sql='DELETE from Route WHERE id < 100000000;'
+	@gcloud spanner databases execute-sql transitdb  --instance=transit --sql='DELETE from ShortestRoute WHERE from_station < 100000000;'
 
 
 dbdrop: ## Drop all tables DANGER
