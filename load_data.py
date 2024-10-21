@@ -12,3 +12,5 @@ if __name__ == "__main__":
     client.run_in_transaction(writeSpanner, stations)
     routes = Routes()
     client.run_in_transaction(writeSpanner, routes)
+    shortest_routes = ShortestRoutes()
+    client.run_in_transaction(writeSpanner, shortest_routes)
