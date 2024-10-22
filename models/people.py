@@ -49,12 +49,19 @@ class Addresses:
             self.list_items = [Address(row) for row in reader]
 
 
-#@dataclass
-#class Routes:
-#    list_items: list[Route]
-#
-#    def __init__(self):
-#        with open("data/transit_edge.csv") as f:
-#            reader = csv.DictReader(f)
-#            self.list_items = [Route(row) for row in reader]
-#
+@dataclass
+class HasInhabitant:
+    id: int
+    to_person: int
+    def __init__(self, inhabitant):
+        self.id = int(inhabitant['id'])
+        self.to_person = int(inhabitant['to_person'])
+
+@dataclass
+class HasInhabitants:
+    list_items: list[HasInhabitant]
+
+    def __init__(self):
+        with open("data/inhabitants.csv") as f:
+            reader = csv.DictReader(f)
+            self.list_items = [HasInhabitant(row) for row in reader]

@@ -17,6 +17,15 @@ CREATE TABLE Person (
   age INT64,
 ) PRIMARY KEY (id);
 
+CREATE TABLE ShortestRoute (
+  from_station INT64 NOT NULL,
+  to_station INT64 NOT NULL,
+  hops INT64 NOT NULL,
+  distance FLOAT64,
+  time FLOAT64,
+  line STRING(MAX),
+) PRIMARY KEY (from_station, to_station);
+
 CREATE TABLE Address (
   id INT64 NOT NULL,
   address STRING(MAX),
@@ -39,29 +48,30 @@ CREATE TABLE Route (
 ) PRIMARY KEY (id, to_station),
 INTERLEAVE IN PARENT Station ON DELETE CASCADE;
 
-CREATE TABLE ShortestRoute (
-  from_station INT64 NOT NULL,
-  to_station INT64 NOT NULL,
-  hops INT64 NOT NULL,
-  distance FLOAT64,
-  time FLOAT64,
-  line STRING(MAX),
---  FOREIGN KEY(from_station) REFERENCES Station(id)
-) PRIMARY KEY (from_station, to_station);
--- INTERLEAVE IN PARENT Station ON DELETE CASCADE;
+CREATE TABLE HasInhabitant (
+  id INT64 NOT NULL,
+  to_person INT64,
+  FOREIGN KEY(to_person) REFERENCES Person(id)
+) PRIMARY KEY (id, to_person),
+INTERLEAVE IN PARENT Person ON DELETE CASCADE;
+  
 
 -- Create the Graph
 
 CREATE OR REPLACE PROPERTY GRAPH TransitGraph
   NODE TABLES (
     Station,
+    Address,
+    Person,
   )
 
   EDGE TABLES (
+    HasInhabitant
+      SOURCE KEY (id) REFERENCES Address (id)
+      DESTINATION KEY (to_person) REFERENCES Person (id)
+      LABEL HAS_INHABITANT,
     Route
       SOURCE KEY (id) REFERENCES Station (id)
       DESTINATION KEY (to_station) REFERENCES Station (id)
       LABEL ROUTE
   );
-
-

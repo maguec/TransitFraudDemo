@@ -16,6 +16,9 @@ if __name__ == "__main__":
     people = Persons()
     client.run_in_transaction(writeSpanner, people)
 
+    inhabitants = HasInhabitants()
+    client.run_in_transaction(writeSpanner, inhabitants)
+
     routes = Routes()
     client.run_in_transaction(writeSpanner, routes)
     shortest_routes = ShortestRoutes()
