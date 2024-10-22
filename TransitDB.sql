@@ -8,9 +8,24 @@ CREATE TABLE Station (
   name_Tokens TOKENLIST AS (TOKENIZE_NGRAMS(name, ngram_size_min=>3, ngram_size_max=>4)) HIDDEN,
 ) PRIMARY KEY (id);
 
--- Create the Search Index
-CREATE SEARCH INDEX StationIndex ON Station(name_Tokens);
+CREATE TABLE Person (
+  id INT64 NOT NULL,
+  firstname STRING(MAX),
+  lastname STRING(MAX),
+  email STRING(MAX),
+  phone STRING(MAX),
+  age INT64,
+) PRIMARY KEY (id);
 
+CREATE TABLE Address (
+  id INT64 NOT NULL,
+  address STRING(MAX),
+  address_Tokens TOKENLIST AS (TOKENIZE_NGRAMS(address, ngram_size_min=>3, ngram_size_max=>4)) HIDDEN,
+) PRIMARY KEY (id);
+
+-- Create the Search Indexes
+CREATE SEARCH INDEX StationIndex ON Station(name_Tokens);
+CREATE SEARCH INDEX StreetIndex ON Address(address_Tokens);
 
 -- Edge Tables
 
