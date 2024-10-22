@@ -1,4 +1,8 @@
 
+```bash
+gcloud spanner  databases execute-sql transitdb --instance transit --sql='SELECT * from Station WHERE SEARCH_NGRAMS(name_Tokens, "Canar") LIMIT 10'
+```
+
 ```sql
 GRAPH TransitGraph 
 MATCH(src:Station{name: "Bond Street"})-[r:ROUTE]->{1,7}(dest:Station{name: "Westminster"})
