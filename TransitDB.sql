@@ -32,6 +32,13 @@ CREATE TABLE Address (
   address_Tokens TOKENLIST AS (TOKENIZE_NGRAMS(address, ngram_size_min=>3, ngram_size_max=>4)) HIDDEN,
 ) PRIMARY KEY (id);
 
+CREATE TABLE Oyster (
+  id INT64 NOT NULL,
+  issue_date STRING(MAX),
+  issue_station INT64,
+  is_suspect INT64,
+) PRIMARY KEY (id);
+
 -- Create the Search Indexes
 CREATE SEARCH INDEX StationIndex ON Station(name_Tokens);
 CREATE SEARCH INDEX StreetIndex ON Address(address_Tokens);
@@ -56,6 +63,14 @@ CREATE TABLE HasInhabitant (
 INTERLEAVE IN PARENT Person ON DELETE CASCADE;
   
 
+CREATE TABLE HasOyster (
+  id INT64 NOT NULL,
+  to_person INT64,
+  FOREIGN KEY(to_person) REFERENCES Person(id)
+) PRIMARY KEY (id, to_person),
+INTERLEAVE IN PARENT Person ON DELETE CASCADE;
+  
+
 -- Create the Graph
 
 CREATE OR REPLACE PROPERTY GRAPH TransitGraph
@@ -66,6 +81,10 @@ CREATE OR REPLACE PROPERTY GRAPH TransitGraph
   )
 
   EDGE TABLES (
+    HasOyster
+      SOURCE KEY (id) REFERENCES Oyster (id)
+      DESTINATION KEY (to_person) REFERENCES Person (id)
+      LABEL HAS_OYSTER,
     HasInhabitant
       SOURCE KEY (id) REFERENCES Address (id)
       DESTINATION KEY (to_person) REFERENCES Person (id)

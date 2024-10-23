@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 import csv
 
+
 @dataclass
 class Person:
     id: int
@@ -11,13 +12,14 @@ class Person:
     email: str
     phone: str
     age: int
+
     def __init__(self, person):
-        self.id = int(person['id'])
-        self.firstname = person['first_name']
-        self.lastname = person['last_name']
-        self.email = person['email']
-        self.phone = person['phone']
-        self.age = person['age']
+        self.id = int(person["id"])
+        self.firstname = person["first_name"]
+        self.lastname = person["last_name"]
+        self.email = person["email"]
+        self.phone = person["phone"]
+        self.age = person["age"]
 
 
 @dataclass
@@ -34,9 +36,10 @@ class Persons:
 class Address:
     id: int
     address: str
+
     def __init__(self, address):
-        self.id = int(address['id'])
-        self.address = address['address']
+        self.id = int(address["id"])
+        self.address = address["address"]
 
 
 @dataclass
@@ -53,9 +56,11 @@ class Addresses:
 class HasInhabitant:
     id: int
     to_person: int
+
     def __init__(self, inhabitant):
-        self.id = int(inhabitant['id'])
-        self.to_person = int(inhabitant['to_person'])
+        self.id = int(inhabitant["id"])
+        self.to_person = int(inhabitant["to_person"])
+
 
 @dataclass
 class HasInhabitants:
@@ -65,3 +70,26 @@ class HasInhabitants:
         with open("data/inhabitants.csv") as f:
             reader = csv.DictReader(f)
             self.list_items = [HasInhabitant(row) for row in reader]
+
+
+@dataclass
+class Oyster:
+    id: int
+    issue_date: str
+    issue_station: int
+
+    def __init__(self, card):
+        self.id = int(card["id"])
+        self.issue_date = card["issue_date"]
+        self.issue_station = int(card["issue_station"])
+        self.is_suspect = int(card["is_suspect"])
+
+
+@dataclass
+class Oysters:
+    list_items: list[Oyster]
+
+    def __init__(self):
+        with open("data/oysters.csv") as f:
+            reader = csv.DictReader(f)
+            self.list_items = [Oyster(row) for row in reader]
