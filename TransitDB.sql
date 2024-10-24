@@ -78,6 +78,7 @@ CREATE OR REPLACE PROPERTY GRAPH TransitGraph
     Station,
     Address,
     Person,
+    Oyster,
   )
 
   EDGE TABLES (

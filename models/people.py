@@ -71,12 +71,31 @@ class HasInhabitants:
             reader = csv.DictReader(f)
             self.list_items = [HasInhabitant(row) for row in reader]
 
+@dataclass
+class HasOyster:
+    id: int
+    to_person: int
 
+    def __init__(self, oyster):
+        self.id = int(oyster["id"])
+        self.to_person = int(oyster["to_person"])
+
+@dataclass
+class HasOysters:
+    list_items: list[HasOyster]
+
+    def __init__(self):
+        with open("data/has_oyster.csv") as f:
+            reader = csv.DictReader(f)
+            self.list_items = [HasOyster(row) for row in reader]
+
+    
 @dataclass
 class Oyster:
     id: int
     issue_date: str
     issue_station: int
+    is_suspect: int
 
     def __init__(self, card):
         self.id = int(card["id"])

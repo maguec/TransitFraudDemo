@@ -19,10 +19,19 @@ if __name__ == "__main__":
     inhabitants = HasInhabitants()
     client.run_in_transaction(writeSpanner, inhabitants)
 
-    routes = Routes()
-    client.run_in_transaction(writeSpanner, routes)
-    shortest_routes = ShortestRoutes()
-    for i in shortest_routes.split(1000):
-        x = ShortestRoutes(fromCsv=False)
-        x.list_items = i
-        client.run_in_transaction(writeSpanner, x)
+    oysters = Oysters()
+    client.run_in_transaction(writeSpanner, oysters)
+
+    hasoysters = HasOysters()
+    print("==========================================")
+    print(hasoysters.list_items[0])
+    print("==========================================")
+    #client.run_in_transaction(writeSpanner, hasoysters)
+
+    #routes = Routes()
+    #client.run_in_transaction(writeSpanner, routes)
+    #shortest_routes = ShortestRoutes()
+    #for i in shortest_routes.split(1000):
+    #    x = ShortestRoutes(fromCsv=False)
+    #    x.list_items = i
+    #    client.run_in_transaction(writeSpanner, x)
