@@ -10,9 +10,9 @@ with open('../data/has_oyster.csv', 'w') as csvfile:
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
     writer.writeheader()
-    for i in range(1000):
+    for i in range(1349):
         writer.writerow({
-            'id': fake.random_int(min=0, max=1349),
-            'to_person': i,
+            'id': i,
+            'to_person': fake.random_int(min=0, max=999),
         })
 

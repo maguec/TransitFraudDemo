@@ -68,7 +68,7 @@ CREATE TABLE HasOyster (
   to_person INT64,
   FOREIGN KEY(to_person) REFERENCES Person(id)
 ) PRIMARY KEY (id, to_person),
-INTERLEAVE IN PARENT Person ON DELETE CASCADE;
+INTERLEAVE IN PARENT Oyster ON DELETE CASCADE;
   
 
 -- Create the Graph
