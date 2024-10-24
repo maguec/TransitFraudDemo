@@ -39,6 +39,13 @@ CREATE TABLE Oyster (
   is_suspect INT64,
 ) PRIMARY KEY (id);
 
+CREATE TABLE Ride (
+  id STRING(36) NOT NULL,
+  oyster_id INT64 NOT NULL,
+  station_id INT64 NOT NULL,
+  timestamp TIMESTAMP NOT NULL,
+) PRIMARY KEY (id);
+
 -- Create the Search Indexes
 CREATE SEARCH INDEX StationIndex ON Station(name_Tokens);
 CREATE SEARCH INDEX StreetIndex ON Address(address_Tokens);

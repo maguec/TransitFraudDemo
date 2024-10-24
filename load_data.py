@@ -3,7 +3,9 @@
 from models.stations import *
 from models.people import *
 from models.utils import *
+from models.rides import *
 from google.cloud import spanner
+from sys import exit
 
 if __name__ == "__main__":
     s = spanner.Client()
@@ -30,5 +32,11 @@ if __name__ == "__main__":
     shortest_routes = ShortestRoutes()
     for i in shortest_routes.split(1000):
         x = ShortestRoutes(fromCsv=False)
+        x.list_items = i
+        client.run_in_transaction(writeSpanner, x)
+
+    rides = Rides()
+    for i in rides.split(1000):
+        x = Rides(fromCsv=False)
         x.list_items = i
         client.run_in_transaction(writeSpanner, x)
