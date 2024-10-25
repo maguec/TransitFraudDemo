@@ -24,11 +24,23 @@ def is_teleport(client, card_id, station_id, timestamp):
             else:
                 return False
 
-def get_linked_addresses(client, card_id):
+def get_linked_cards(client, card_id):
     query = """
     GRAPH TransitGraph
         MATCH (o:Oyster{{id: {}}})-[o1:HAS_OYSTER]->(p:Person)<-[o2:HAS_OYSTER]-(q:Oyster)
         RETURN p.id as person_id, p.firstname, p.lastname, q.id as linked_card_id, q.is_suspect as sus
+    """.format(card_id)
+    with client.snapshot() as snapshot:
+        results = snapshot.execute_sql(query)
+        for row in results:
+            print(row)
+
+def get_linked_addresses(client, card_id):
+    query = """
+    GRAPH TransitGraph
+        MATCH (o:Oyster{{id: {}}})-[o1:HAS_OYSTER]->(p:Person)<-[:HAS_INHABITANT]-(a:Address)-[:HAS_INHABITANT]->(q:Person)-[o2:HAS_OYSTER]-(r:Oyster)
+        WHERE q.id != p.id
+        RETURN p.firstname as src_firstanme, p.lastname as src_lastname, a.address, q.firstname as tgt_firstanme, q.lastname as tgt_lastname, r.id as linked_card_id, r.is_suspect as sus
     """.format(card_id)
     with client.snapshot() as snapshot:
         results = snapshot.execute_sql(query)
@@ -51,8 +63,9 @@ if __name__ == "__main__":
     instance = s.instance("transit")
     client = instance.database("transitdb")
     if is_teleport(client, args.card_id, args.station_id, args.timestamp):
-        print("duplicate card detected for card# {}".format(args.card_id))
-        print("investigating graph")
+        print("possible cloned card detected for card# {}".format(args.card_id))
+        print("investigating other cards linked to this card...")
+        get_linked_cards(client, args.card_id)
         get_linked_addresses(client, args.card_id)
     else:
         print("Pass for card# {}".format(args.card_id))
