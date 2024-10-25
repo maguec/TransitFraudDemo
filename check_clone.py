@@ -28,13 +28,12 @@ def get_linked_addresses(client, card_id):
     query = """
     GRAPH TransitGraph
         MATCH (o:Oyster{{id: {}}})-[o1:HAS_OYSTER]->(p:Person)<-[o2:HAS_OYSTER]-(q:Oyster)
-        RETURN p.id as person_id, p.firstname, p.lastname, q.id as linked_card_id
+        RETURN p.id as person_id, p.firstname, p.lastname, q.id as linked_card_id, q.is_suspect as sus
     """.format(card_id)
     with client.snapshot() as snapshot:
         results = snapshot.execute_sql(query)
-        if len(results) > 0:
-            for row in results:
-                print(row)
+        for row in results:
+            print(row)
 
 
 if __name__ == "__main__":
