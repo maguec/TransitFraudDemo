@@ -20,6 +20,12 @@ pip install -r requirements.txt
 ./load_data.py
 ```
 
+## Run the Webapp
+
+```bash
+./app.py
+```
+
 ## Start Queryring
 
 [Queries](./SampleQueries.md)
