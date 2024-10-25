@@ -30,4 +30,8 @@ SELECT time AS ShortestPossibleTime, latest_ride.timestamp,
 WHERE from_station = 100;
 ```
 
+## Find a bad actor and the other cards associated with them
 
+```bash
+./check_clone.py -c 122 -s 100 -t 2024-10-25:22:15:12Z
+```
