@@ -23,26 +23,15 @@
   {%- endif %}
   {%- endwith %}
     <div class="jumbotron">
-      {%- if row %}
-      <h3>Card {{card_id}} checked in at Station {{station_id}} and Station {{row[2]|int}} within {{row[0]|int}} seconds which is not possible</h3>
-      <h4>Try tracing the card</h4>
-      <br><br>
-      <h4>Ride History(Last 25)</h4>
-      <div class="container">
-        <table class="table table-dark table-striped w-auto" >
-          <thead class="thead-dark">
-              <tr><th>RideID</th><th>Time</th><th>Station</th></tr>
-          </thead>
-          <tbody>
-            {% for row in history %}
-              <tr><td>{{row[0]}}</td><td>{{row[1]}}</td><td>{{row[2]}}</td></tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-      {%- else %}
-      <h1>No Clone Suspected </h1>
-      {%- endif %}
+      <h2>Explanation</h2>
+      <p></p>
+      <p>This is an explanation of how the system works</p>
+      <p>We have created a Spanner Graph Database to store the stations in the London Underground and pre-calculated all of the transit times between the stations.</p>
+      <p>In addtion we have Oyster transit cards, mapped to riders and the physical addresses that they are mapped to.</p>
+      <p>In our Tube system riders to not need to swipe out, but they need to swipe in.</p>
+      <p>We collect every swipe and store it in the database.  We then check to see if the card has been cloned, by determining the shortest travel times between stations and flag a card if it gets somewhere faster than is possible</p>
+
+      <p><center><img src="/docs/graph.png" alt="GraphDiagram"></center></p>
     </div>
    </div>
 {%- endblock %}

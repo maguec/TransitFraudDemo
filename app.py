@@ -7,7 +7,12 @@ import json
 from collections import namedtuple
 from datetime import datetime
 
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    static_url_path="/docs",
+    static_folder="docs",
+)
+
 bootstrap = Bootstrap()
 s = spanner.Client()
 instance = s.instance("transit")
@@ -17,6 +22,14 @@ Person = namedtuple("Person", ["id", "name", "group"])
 Card = namedtuple("Card", ["id", "name", "group", ])
 Address = namedtuple("Address", ["id", "name", "group"])
 Edge = namedtuple("Edge", ["source", "target", "group"])
+
+def get_card_history(client, card_id):
+    query = """
+    SELECT r.id, r.timestamp, s.name AS station_name, FROM Ride AS r JOIN Station AS s ON r.station_id = s.id WHERE r.oyster_id = {} ORDER BY r.timestamp DESC LIMIT 25;
+    """.format(card_id)
+    with client.snapshot() as snapshot:
+        results = snapshot.execute_sql(query)
+        return results
 
 def is_teleport(client, card_id, station_id, timestamp):
     query = """
@@ -96,7 +109,7 @@ def cloneview():
     card_id = request.form['cardid']
     station_id = request.form['stationid']
     timestamp = datetime.fromisoformat(request.form['timestamp'])
-    return render_template("cloneview.html", row=is_teleport(client, card_id, station_id, timestamp), station_id=station_id, card_id=card_id)
+    return render_template("cloneview.html", row=is_teleport(client, card_id, station_id, timestamp), station_id=station_id, card_id=card_id, history=get_card_history(client, card_id))
 
 
 @app.route("/")
@@ -107,6 +120,10 @@ def index():
 def cloneform():
     return render_template("cloneform.html")
 
+
+@app.route("/explanation")
+def explanation():
+    return render_template("explanation.html")
 
 if __name__ == "__main__":
     bootstrap.init_app(app)
