@@ -76,7 +76,11 @@ def data_from_graph(card_id):
             )
             node_set.append(Address("Address{}".format(row[4]), row[5], "address"))
             node_set.append(Card("Oyster{}".format(row[3]), "Oyster{}".format(row[3]), "card"))
-            node_set.append(Card("Oyster{}".format(row[9]), "Oyster{}".format(row[9]), "card{}".format(row[10])))
+            if row[10] > 0:
+                node_set.append(Card("Oyster{}".format(row[9]), "SUSPECT-Oyster{}".format(row[9]), "card{}".format(row[10])))
+            else:
+                node_set.append(Card("Oyster{}".format(row[9]), "Oyster{}".format(row[9]), "card{}".format(row[10])))
+
             link_set.append(Edge("Person{}".format(row[8]), "Oyster{}".format(row[9]),"owns"))
             link_set.append(Edge("Person{}".format(row[0]), "Oyster{}".format(row[3]), "owns"))
             link_set.append(Edge("Person{}".format(row[0]), "Address{}".format(row[4]), "resides"))

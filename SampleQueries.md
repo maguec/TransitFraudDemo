@@ -30,6 +30,26 @@ SELECT time AS ShortestPossibleTime, latest_ride.timestamp,
 WHERE from_station = 100;
 ```
 
+## Find Addresses associated with Suspect cards
+
+```sql
+GRAPH TransitGraph
+MATCH (a:Address)-[:HAS_INHABITANT]->(p:Person)<-[:HAS_OYSTER]-(o:Oyster)
+WHERE o.is_suspect = 1
+RETURN a.id as AddressID, a.address AS StreetAddress, 
+count(a.id) as BadCards GROUP by a.id, StreetAddress ORDER by BadCards DESC LIMIT 10
+```
+
+## Look at Suspect cards by Station
+
+```sql
+SELECT s.name, COUNT(*) AS issue_count FROM Oyster AS o
+JOIN 
+    Station AS s ON o.issue_station = s.id
+WHERE o.is_suspect = 1 GROUP BY s.name
+ORDER BY issue_count DESC LIMIT 20;
+```
+
 ## Find a bad actor and the other cards associated with them
 
 ```bash
