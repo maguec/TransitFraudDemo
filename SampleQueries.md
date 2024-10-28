@@ -37,7 +37,19 @@ GRAPH TransitGraph
 MATCH (a:Address)-[:HAS_INHABITANT]->(p:Person)<-[:HAS_OYSTER]-(o:Oyster)
 WHERE o.is_suspect = 1
 RETURN a.id as AddressID, a.address AS StreetAddress, 
-count(a.id) as BadCards GROUP by a.id, StreetAddress ORDER by BadCards DESC LIMIT 10
+count(a.id) as BadCards GROUP by a.id, StreetAddress ORDER by BadCards DESC LIMIT 100
+```
+
+## We have obfuscation!!
+
+```sql
+GRAPH TransitGraph
+MATCH (a:Address)-[:HAS_INHABITANT]->(p:Person)<-[:HAS_OYSTER]-(o:Oyster)
+WHERE a.id IN (
+  SELECT id from Address WHERE 
+  SEARCH_NGRAMS(address_Tokens, 'Rebecca AND 65261'))
+RETURN o.id, o.is_suspect, p.firstname, p.lastname,o.issue_station 
+ORDER by o.is_suspect DESC
 ```
 
 ## Look at Suspect cards by Station
