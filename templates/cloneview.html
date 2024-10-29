@@ -24,7 +24,15 @@
   {%- endwith %}
     <div class="jumbotron">
       {%- if row %}
-      <h3>Card {{card_id}} checked in at Station {{station_id}} and Station {{row[2]|int}} within {{row[0]|int}} seconds which is not possible</h3>
+      <h2>
+      <table>
+      <tr><td>Card {{card_id}} checked in at</td></tr>
+      <tr><td>{{to_station}}</td><td>{{row[1]}}</td></tr>
+      <tr><td>{{from_station}}</td><td>{{row[3]}}</td></tr>
+      <tr><td> within</td><td> {{row[0]|int}} seconds</td></tr>
+      </table>
+      </h2>
+      <p style="color:red">This is shorter than the travel time between these stations</p>
       <h4>Try tracing the card</h4>
       <br><br>
       <h4>Ride History(Last 25)</h4>

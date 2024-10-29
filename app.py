@@ -31,6 +31,14 @@ def get_card_history(client, card_id):
         results = snapshot.execute_sql(query)
         return results
 
+def station_id_to_name(client, station_id):
+    query = "SELECT name from Station where id={}".format(int(station_id))
+    with client.snapshot() as snapshot:
+        results = snapshot.execute_sql(query)
+        for row in results:
+            return row[0]
+    return None
+
 def is_teleport(client, card_id, station_id, timestamp):
     query = """
     SELECT time AS ShortestPossibleTime, latest_ride.timestamp, station_id,
@@ -67,7 +75,6 @@ def data_from_graph(card_id):
     with client.snapshot() as snapshot:
         results = snapshot.execute_sql(query)
         for row in results:
-            print(row)
             node_set.append(
                 Person("Person{}".format(row[0]), "{} {}".format(row[1], row[2]), "person")
             )
@@ -113,7 +120,13 @@ def cloneview():
     card_id = request.form['cardid']
     station_id = request.form['stationid']
     timestamp = datetime.fromisoformat(request.form['timestamp'])
-    return render_template("cloneview.html", row=is_teleport(client, card_id, station_id, timestamp), station_id=station_id, card_id=card_id, history=get_card_history(client, card_id))
+    row = is_teleport(client, card_id, station_id, timestamp)
+    print(row)
+    return render_template(
+        "cloneview.html", row=row, station_id=station_id,
+        card_id=card_id, history=get_card_history(client, card_id),
+        from_station = station_id_to_name(client, station_id), to_station = station_id_to_name(client, row[2])
+    )
 
 
 @app.route("/")
