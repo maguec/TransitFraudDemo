@@ -121,7 +121,6 @@ def cloneview():
     station_id = request.form['stationid']
     timestamp = datetime.fromisoformat(request.form['timestamp'])
     row = is_teleport(client, card_id, station_id, timestamp)
-    print(row)
     return render_template(
         "cloneview.html", row=row, station_id=station_id,
         card_id=card_id, history=get_card_history(client, card_id),
