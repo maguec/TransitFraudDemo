@@ -19,17 +19,28 @@ instance = s.instance("transit")
 client = instance.database("transitdb")
 
 Person = namedtuple("Person", ["id", "name", "group"])
-Card = namedtuple("Card", ["id", "name", "group", ])
+Card = namedtuple(
+    "Card",
+    [
+        "id",
+        "name",
+        "group",
+    ],
+)
 Address = namedtuple("Address", ["id", "name", "group"])
 Edge = namedtuple("Edge", ["source", "target", "group"])
+
 
 def get_card_history(client, card_id):
     query = """
     SELECT r.id, r.timestamp, s.name AS station_name, FROM Ride AS r JOIN Station AS s ON r.station_id = s.id WHERE r.oyster_id = {} ORDER BY r.timestamp DESC LIMIT 25;
-    """.format(card_id)
+    """.format(
+        card_id
+    )
     with client.snapshot() as snapshot:
         results = snapshot.execute_sql(query)
         return results
+
 
 def station_id_to_name(client, station_id):
     query = "SELECT name from Station where id={}".format(int(station_id))
@@ -38,6 +49,7 @@ def station_id_to_name(client, station_id):
         for row in results:
             return row[0]
     return None
+
 
 def is_teleport(client, card_id, station_id, timestamp):
     query = """
@@ -48,15 +60,18 @@ def is_teleport(client, card_id, station_id, timestamp):
         ) as latest_ride
       ON ShortestRoute.to_station = latest_ride.station_id
     WHERE from_station = {};
-    """.format(card_id, station_id)
+    """.format(
+        card_id, station_id
+    )
     with client.snapshot() as snapshot:
         results = snapshot.execute_sql(query)
 
         for row in results:
-            if (row[1]-timestamp).total_seconds() < row[0]:
+            if (row[1] - timestamp).total_seconds() < row[0]:
                 return row
             else:
                 return None
+
 
 def data_from_graph(card_id):
     node_set = []
@@ -76,22 +91,48 @@ def data_from_graph(card_id):
         results = snapshot.execute_sql(query)
         for row in results:
             node_set.append(
-                Person("Person{}".format(row[0]), "{} {}".format(row[1], row[2]), "person")
+                Person(
+                    "Person{}".format(row[0]), "{} {}".format(row[1], row[2]), "person"
+                )
             )
             node_set.append(
-                Person("Person{}".format(row[8]), "{} {}".format(row[6], row[7]), "person")
+                Person(
+                    "Person{}".format(row[8]), "{} {}".format(row[6], row[7]), "person"
+                )
             )
             node_set.append(Address("Address{}".format(row[4]), row[5], "address"))
-            node_set.append(Card("Oyster{}".format(row[3]), "Oyster{}".format(row[3]), "card"))
+            node_set.append(
+                Card("Oyster{}".format(row[3]), "Oyster{}".format(row[3]), "card")
+            )
             if row[10] > 0:
-                node_set.append(Card("Oyster{}".format(row[9]), "SUSPECT-Oyster{}".format(row[9]), "card{}".format(row[10])))
+                node_set.append(
+                    Card(
+                        "Oyster{}".format(row[9]),
+                        "SUSPECT-Oyster{}".format(row[9]),
+                        "card{}".format(row[10]),
+                    )
+                )
             else:
-                node_set.append(Card("Oyster{}".format(row[9]), "Oyster{}".format(row[9]), "card{}".format(row[10])))
+                node_set.append(
+                    Card(
+                        "Oyster{}".format(row[9]),
+                        "Oyster{}".format(row[9]),
+                        "card{}".format(row[10]),
+                    )
+                )
 
-            link_set.append(Edge("Person{}".format(row[8]), "Oyster{}".format(row[9]),"owns"))
-            link_set.append(Edge("Person{}".format(row[0]), "Oyster{}".format(row[3]), "owns"))
-            link_set.append(Edge("Person{}".format(row[0]), "Address{}".format(row[4]), "resides"))
-            link_set.append(Edge("Person{}".format(row[8]), "Address{}".format(row[4]), "resides"))
+            link_set.append(
+                Edge("Person{}".format(row[8]), "Oyster{}".format(row[9]), "owns")
+            )
+            link_set.append(
+                Edge("Person{}".format(row[0]), "Oyster{}".format(row[3]), "owns")
+            )
+            link_set.append(
+                Edge("Person{}".format(row[0]), "Address{}".format(row[4]), "resides")
+            )
+            link_set.append(
+                Edge("Person{}".format(row[8]), "Address{}".format(row[4]), "resides")
+            )
     return json.dumps(
         {
             "nodes": [n._asdict() for n in set(node_set)],
@@ -111,26 +152,31 @@ def data(card_id):
 
 @app.route("/view", methods=["POST"])
 def view():
-    card_id = request.form['cardid']
+    card_id = request.form["cardid"]
     return render_template("view.html", card_id=card_id)
 
 
 @app.route("/cloneview", methods=["POST"])
 def cloneview():
-    card_id = request.form['cardid']
-    station_id = request.form['stationid']
-    timestamp = datetime.fromisoformat(request.form['timestamp'])
+    card_id = request.form["cardid"]
+    station_id = request.form["stationid"]
+    timestamp = datetime.fromisoformat(request.form["timestamp"])
     row = is_teleport(client, card_id, station_id, timestamp)
     return render_template(
-        "cloneview.html", row=row, station_id=station_id,
-        card_id=card_id, history=get_card_history(client, card_id),
-        from_station = station_id_to_name(client, station_id), to_station = station_id_to_name(client, row[2])
+        "cloneview.html",
+        row=row,
+        station_id=station_id,
+        card_id=card_id,
+        history=get_card_history(client, card_id),
+        from_station=station_id_to_name(client, station_id),
+        to_station=station_id_to_name(client, row[2]),
     )
 
 
 @app.route("/")
 def index():
     return render_template("index.html")
+
 
 @app.route("/clone")
 def cloneform():
@@ -140,6 +186,7 @@ def cloneform():
 @app.route("/explanation")
 def explanation():
     return render_template("explanation.html")
+
 
 if __name__ == "__main__":
     bootstrap.init_app(app)

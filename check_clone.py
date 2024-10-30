@@ -5,6 +5,7 @@ import argparse
 from sys import exit
 from datetime import datetime
 
+
 def is_teleport(client, card_id, station_id, timestamp):
     query = """
     SELECT time AS ShortestPossibleTime, latest_ride.timestamp, 
@@ -14,26 +15,32 @@ def is_teleport(client, card_id, station_id, timestamp):
         ) as latest_ride
       ON ShortestRoute.to_station = latest_ride.station_id 
     WHERE from_station = {};
-    """.format(args.card_id, args.station_id)
+    """.format(
+        args.card_id, args.station_id
+    )
     with client.snapshot() as snapshot:
         results = snapshot.execute_sql(query)
 
         for row in results:
-            if (row[1]-args.timestamp).total_seconds() < row[0]:
+            if (row[1] - args.timestamp).total_seconds() < row[0]:
                 return True
             else:
                 return False
+
 
 def get_linked_cards(client, card_id):
     query = """
     GRAPH TransitGraph
         MATCH (o:Oyster{{id: {}}})-[o1:HAS_OYSTER]->(p:Person)<-[o2:HAS_OYSTER]-(q:Oyster)
         RETURN p.id as person_id, p.firstname, p.lastname, q.id as linked_card_id, q.is_suspect as sus
-    """.format(card_id)
+    """.format(
+        card_id
+    )
     with client.snapshot() as snapshot:
         results = snapshot.execute_sql(query)
         for row in results:
             print(row)
+
 
 def get_linked_addresses(client, card_id):
     query = """
@@ -41,7 +48,9 @@ def get_linked_addresses(client, card_id):
         MATCH (o:Oyster{{id: {}}})-[o1:HAS_OYSTER]->(p:Person)<-[:HAS_INHABITANT]-(a:Address)-[:HAS_INHABITANT]->(q:Person)-[o2:HAS_OYSTER]-(r:Oyster)
         WHERE q.id != p.id
         RETURN p.firstname as src_firstanme, p.lastname as src_lastname, a.address, q.firstname as tgt_firstanme, q.lastname as tgt_lastname, r.id as linked_card_id, r.is_suspect as sus
-    """.format(card_id)
+    """.format(
+        card_id
+    )
     with client.snapshot() as snapshot:
         results = snapshot.execute_sql(query)
         for row in results:
@@ -50,12 +59,17 @@ def get_linked_addresses(client, card_id):
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(prog='check_clone')
-    parser.add_argument('-c', '--card-id', type=int, help='The Oyster Card ID')
-    parser.add_argument('-s', '--station-id', type=int, help='The Station ID')
-    parser.add_argument('-t', '--timestamp', type=datetime.fromisoformat, help='ISOformat - YYYY-MM-DD:HH:mm:ssZ')
+    parser = argparse.ArgumentParser(prog="check_clone")
+    parser.add_argument("-c", "--card-id", type=int, help="The Oyster Card ID")
+    parser.add_argument("-s", "--station-id", type=int, help="The Station ID")
+    parser.add_argument(
+        "-t",
+        "--timestamp",
+        type=datetime.fromisoformat,
+        help="ISOformat - YYYY-MM-DD:HH:mm:ssZ",
+    )
     args = parser.parse_args()
-    if any( arg is None for arg in [args.card_id, args.station_id, args.timestamp]):
+    if any(arg is None for arg in [args.card_id, args.station_id, args.timestamp]):
         parser.print_help()
         exit(1)
 

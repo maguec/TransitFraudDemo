@@ -71,6 +71,7 @@ class HasInhabitants:
             reader = csv.DictReader(f)
             self.list_items = [HasInhabitant(row) for row in reader]
 
+
 @dataclass
 class HasOyster:
     id: int
@@ -79,6 +80,7 @@ class HasOyster:
     def __init__(self, oyster):
         self.id = int(oyster["id"])
         self.to_person = int(oyster["to_person"])
+
 
 @dataclass
 class HasOysters:
@@ -89,7 +91,7 @@ class HasOysters:
             reader = csv.DictReader(f)
             self.list_items = [HasOyster(row) for row in reader]
 
-    
+
 @dataclass
 class Oyster:
     id: int

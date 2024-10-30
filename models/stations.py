@@ -4,6 +4,7 @@ from dataclasses import dataclass
 import csv
 import typing
 
+
 @dataclass
 class Station:
     id: int
@@ -12,10 +13,11 @@ class Station:
     longitude: float
 
     def __init__(self, station):
-        self.id = int(station['id'])
-        self.name = station['station']
-        self.latitude = float(station['latitude'])
-        self.longitude = float(station['longitude'])
+        self.id = int(station["id"])
+        self.name = station["station"]
+        self.latitude = float(station["latitude"])
+        self.longitude = float(station["longitude"])
+
 
 @dataclass
 class Stations:
@@ -26,6 +28,7 @@ class Stations:
             reader = csv.DictReader(f)
             self.list_items = [Station(row) for row in reader]
 
+
 @dataclass
 class Route:
     id: int
@@ -34,10 +37,11 @@ class Route:
     time: float
 
     def __init__(self, route):
-        self.id = int(route['from'])
-        self.to_station = int(route['to'])
-        self.distance = float(route['distance'])
-        self.time = float(route['time'])
+        self.id = int(route["from"])
+        self.to_station = int(route["to"])
+        self.distance = float(route["distance"])
+        self.time = float(route["time"])
+
 
 @dataclass
 class Routes:
@@ -48,6 +52,7 @@ class Routes:
             reader = csv.DictReader(f)
             self.list_items = [Route(row) for row in reader]
 
+
 @dataclass
 class ShortestRoute:
     from_station: int
@@ -57,11 +62,12 @@ class ShortestRoute:
     time: float
 
     def __init__(self, route):
-        self.from_station = int(route['start_id'])
-        self.to_station = int(route['end_id'])
-        self.hops = int(route['hops'])
-        self.distance = float(route['distance'])
-        self.time = float(route['time'])
+        self.from_station = int(route["start_id"])
+        self.to_station = int(route["end_id"])
+        self.hops = int(route["hops"])
+        self.distance = float(route["distance"])
+        self.time = float(route["time"])
+
 
 @dataclass
 class ShortestRoutes:
@@ -76,5 +82,5 @@ class ShortestRoutes:
     def split(self, n):
         res = []
         for i in range(0, len(self.list_items), n):
-            res.append(self.list_items[i:i + n])
+            res.append(self.list_items[i : i + n])
         return res
