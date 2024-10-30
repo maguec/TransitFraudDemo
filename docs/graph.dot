@@ -14,6 +14,5 @@ digraph diag {
   Address -> Person [label=HAS_INHABITANT];
   Station -> Station [label=ROUTE];
   Ride -> Oyster;
-  Ride -> Person;
   Ride -> Station;
 }
