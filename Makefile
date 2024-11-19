@@ -10,7 +10,7 @@ loadschema: ## Load Schema onto Spanner
 	@gcloud spanner databases create transitdb --instance  transit --ddl-file=TransitDB.sql
 
 instancecreate: ## Spin up a single node Spanner instance
-	@gcloud spanner instances create transit --description="Transit Database" --nodes=1 --config=regional-us-west1 --edition=ENTERPRISE
+	@gcloud spanner instances create transit --description="Transit Database" --config=regional-us-west1 --edition=ENTERPRISE --processing-units=100
 
 instancedelete: ## Shutdown the Spanner instance
 	@gcloud spanner instances delete transit
