@@ -39,3 +39,10 @@ pip install -r requirements.txt
 
 [Queries](./SampleQueries.md)
 
+## Running Raw Queries
+
+You can also run a raw query to receive back a JSON object detailing the paths
+
+```bash
+curl -s -X POST  -d '(Station{id: 155})-[r:ROUTE]->{1,4}(t:Station)' http://localhost:5000/raw |jq
+```

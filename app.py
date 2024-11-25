@@ -155,6 +155,19 @@ def view():
     card_id = request.form["cardid"]
     return render_template("view.html", card_id=card_id)
 
+@app.route("/raw", methods=["POST"])
+def raw():
+    response='{"status": "UNKNOWN"}'
+    query = """GRAPH TransitGraph
+    MATCH p={}
+    RETURN SAFE_TO_JSON(p) as thepath
+    """.format(request.get_data().decode('utf-8'))
+    print(query)
+    with client.snapshot() as snapshot:
+        results = snapshot.execute_sql(query)
+        for row in results:
+            response = json.dumps(row[0].__dict__["_array_value"])
+    return(response)
 
 @app.route("/cloneview", methods=["POST"])
 def cloneview():
